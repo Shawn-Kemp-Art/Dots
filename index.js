@@ -7,6 +7,9 @@ document.body.innerHTML = '<style>body {margin: 0px;text-align: center;}</style>
 setquery("fxhash",$fx.hash);
 var initialTime = new Date().getTime();
 
+//file name 
+var fileName = $fx.hash;
+
 var canvas = document.getElementById("myCanvas");
 
 paper.setup('myCanvas');
@@ -32,13 +35,13 @@ definitions = [
         default: 12,
         options: {
             min: 6,
-            max: 12,
+            max: 24,
             step: 1,
         },  
     },
     {
         id: "punchRadius",
-        name: "Punch radius",
+        name: "Dot size",
         type: "number",
         options: {
             min: 25,
@@ -57,7 +60,7 @@ definitions = [
         name: "Aspect ratio",
         type: "select",
         default: "4:5",
-        options: {options: ["1:1", "2:5","3:5","4:5","54:86"]},
+        options: {options: ["1:1", "2:5","3:5","4:5","54:86","296:420"]},
     },
     {
         id: "size",
@@ -93,11 +96,11 @@ definitions = [
         id: "matwidth",
         name: "Mat size",
         type: "number",
-        default: 125,
+        default: 75,
         options: {
             min: 50,
             max: 200,
-            step: 25,
+            step: 10,
         },  
     },
 
@@ -122,6 +125,7 @@ if ($fx.getParam('aspectratio')== "2:5"){wide = 400; high = 1000};
 if ($fx.getParam('aspectratio')== "3:5"){wide = 600; high = 1000};
 if ($fx.getParam('aspectratio')== "4:5"){wide = 800; high = 1000};
 if ($fx.getParam('aspectratio')== "54:86"){wide = 540; high = 860};
+if ($fx.getParam('aspectratio')== "296:420"){wide =705; high = 1000};
 
 var ratio = 1/scale;//use 1/4 for 32x40 - 1/3 for 24x30 - 1/2 for 16x20 - 1/1 for 8x10
 var minOffset = ~~(7*ratio); //this is aproximatly .125"
@@ -296,7 +300,7 @@ for (z = 0; z < stacks; z++) {
     $fx.features(features);
     //$fx.preview();
 
-      floatingframe();
+      //floatingframe();
     //upspirestudio(features); //#render and send features to upspire.studio
 
 
@@ -382,6 +386,7 @@ function floatingframe(){
         var framegroup = new Group(woodframe);
         woodframe.style = {fillColor: '#60513D', strokeColor: "#60513D", strokeWidth: 1*ratio,shadowColor: new Color(0,0,0,[0.5]),shadowBlur: 20,shadowOffset: new Point(10*2.2, 10*2.2)};
     } else {woodframe.removeChildren()} 
+    fileName = "Framed-"+$fx.hash;
 }
 
 function rangeInt(range,x,y,z){
@@ -406,10 +411,6 @@ function cut(z,s){
 function drawFrame(z){
     var outsideframe = new Path.Rectangle(new Point(0, 0),new Size(wide, high), framradius)
     var insideframe = new Path.Rectangle(new Point(framewidth, framewidth),new Size(wide-framewidth*2, high-framewidth*2)) 
-    //var outsideframe = new Path.Circle(new Point(wide/2, wide/2),wide/2);
-    //var insideframe = new Path.Circle(new Point(wide/2, wide/2),wide/2-framewidth);
-
-
     sheet[z] = outsideframe.subtract(insideframe);
     outsideframe.remove();insideframe.remove();
 }
@@ -491,18 +492,18 @@ function hanger (z){
 
 
 //--------- Interaction functions -----------------------
-var interactiontext = "Interactions\nB = Blueprint mode\nV = Export SVG\nP = Export PNG\nC = Export colors as TXT\nE = Show layers\n"
+var interactiontext = "Interactions\nB = Blueprint mode\nV = Export SVG\nP = Export PNG\nC = Export colors as TXT\nE = Show layers\nF = Add floating frame\nL = Format for plotting"
 
 view.onDoubleClick = function(event) {
-    console.log("png")
-    canvas.toBlob(function(blob) {saveAs(blob, tokenData.hash+'.png');});
+    alert(interactiontext);
+    console.log(project.exportJSON());
+    //canvas.toBlob(function(blob) {saveAs(blob, tokenData.hash+'.png');});
 };
 
 document.addEventListener('keypress', (event) => {
 
        //Save as SVG 
        if(event.key == "v") {
-            fileName = $fx.hash;
             var url = "data:image/svg+xml;utf8," + encodeURIComponent(paper.project.exportSVG({asString:true}));
             var key = [];for (l=stacks;l>0;l--){key[stacks-l] = colors[l-1].Name;}; 
             var svg1 = "<!--"+key+"-->" + paper.project.exportSVG({asString:true})
@@ -514,36 +515,48 @@ document.addEventListener('keypress', (event) => {
             }
 
 
+        if(event.key == "f") {
+            floatingframe();
+            
+        }
+        
+        if(event.key == "F") {
+            frameColor = prompt("Frame color(hex)", frameColor);
+            floatingframe();
+            }    
+
+
        //Format for Lightburn
        if(event.key == "b") {
-        floatingframe();
+        fileName = "blueprint-"+$fx.hash;
             for (z=0;z<stacks;z++){
                 sheet[z].style = {fillColor: null,strokeWidth: .1,strokeColor: lightburn[stacks-z-1].Hex,shadowColor: null,shadowBlur: null,shadowOffset: null}
                 sheet[z].selected = true;}
             }
 
+       //Format for plotting
+       if(event.key == "l") {
+            fileName = "Plotting-"+$fx.hash;
+
+            for (z=0;z<stacks;z++){
+            sheet[z].style = {fillColor: null,strokeWidth: .1,strokeColor: plottingColors[stacks-z-1].Hex,shadowColor: null,shadowBlur: null,shadowOffset: null}
+            sheet[z].selected = true;
+            }
+        
+            for (z=0;z<stacks;z++){
+                if (z<stacks-1){
+                    for (zs=z+1;zs<stacks;zs++){
+                        sheet[z] = sheet[z].subtract(sheet[zs]);
+                        sheet[z].previousSibling.remove();
+                    }
+                } 
+                console.log("optimizing")
+            }
+        }
+
         //new hash
-       if(event.key == " ") {
+        if(event.key == " ") {
             setquery("fxhash",null);
-            location.reload();
-            }
-
-            //toggle half vs full width
-            if(event.key == "0") {
-            if(w){setquery("w",null);}
-            if(wide==800) {setquery("w","4");}
-            location.reload();
-            }
-
-        //scale
-       if(event.key == "1" || event.key =="2" ||event.key =="3" || event.key =="4") {
-            setquery("scale",event.key);
-            location.reload();
-            }
-
-        //oriantation
-       if(event.key == "w" || event.key =="t" ||event.key =="s" ) {
-            setquery("orientation",event.key);
             location.reload();
             }
 
@@ -551,45 +564,27 @@ document.addEventListener('keypress', (event) => {
        if(event.key == "h" || event.key == "/") {
             alert(interactiontext);
             }
-
-  
-
-            //layers
-       if(event.key == "l") {
-            var l = prompt("How many layers", stacks);
-            setquery("layers",l);
-            location.reload();
-            }
-        
-        
+             
         //Save as PNG
         if(event.key == "p") {
-            canvas.toBlob(function(blob) {saveAs(blob, $fx.hash+'.png');});
-            }
-
-        if(event.key == "f") {
-                floatingframe();
+            canvas.toBlob(function(blob) {saveAs(blob, fileName+'.png');});
             }
 
         //Export colors as txt
         if(event.key == "c") {
-            var key = [];
-            key[0]=window.location.href;
-            for (l=stacks;l>0;l--){
-                key[stacks-l] =  colors[l-1].Name;
-            }; 
-            key[stacks+1]=window.location.href;
-            console.log(key.reverse())
-            var content = JSON.stringify(key.reverse())
-            var filename = $fx.hash + ".txt";
+            content = JSON.stringify(features,null,2);
+            console.log(content);
+            var filename = "Colors-"+$fx.hash + ".txt";
             var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
             saveAs(blob, filename);
             }
 
 
+
        //Explode the layers     
-       if(event.key == "e") {     
-            h=0;t=0;maxwidth=10000;
+       if(event.key == "e") {   
+            //floatingframe();  
+            h=0;t=0;maxwidth=3000;
                for (z=0; z<sheet.length; z++) { 
                sheet[z].scale(1000/2300)   
                sheet[z].position = new Point(wide/2,high/2);        
