@@ -27,6 +27,21 @@ var seed = Math.floor($fx.rand()*10000000000000000);
 var noise = new perlinNoise3d();
 noise.noiseSeed(seed);
 
+//read in query strings
+var qcolor1 = "AllColors";
+if(new URLSearchParams(window.location.search).get('c1')){qcolor1 = new URLSearchParams(window.location.search).get('c1')}; //colors1
+var qcolor2 = "None";
+if(new URLSearchParams(window.location.search).get('c2')){qcolor2 = new URLSearchParams(window.location.search).get('c2')}; //colors2
+var qcolor3 = "None";
+if(new URLSearchParams(window.location.search).get('c3')){qcolor3 = new URLSearchParams(window.location.search).get('c3')}; //colors3
+var qcolors = R.random_int(1,6);
+if(new URLSearchParams(window.location.search).get('c')){qcolors = new URLSearchParams(window.location.search).get('c')}; //number of colors
+var qsize = "2";
+if(new URLSearchParams(window.location.search).get('s')){qsize = new URLSearchParams(window.location.search).get('s')}; //size
+var qcomplexity = R.random_int(1,10);
+if(new URLSearchParams(window.location.search).get('d')){qcomplexity = new URLSearchParams(window.location.search).get('d')}; //size
+qcomplexity= qcomplexity*25;
+
 definitions = [
     {
         id: "layers",
@@ -43,6 +58,7 @@ definitions = [
         id: "punchRadius",
         name: "Dot size",
         type: "number",
+        default: qcomplexity,
         options: {
             min: 25,
             max: 100,
@@ -64,15 +80,16 @@ definitions = [
     },
     {
         id: "size",
-        name: "Scale",
+        name: "Size",
         type: "select",
-        default: "2",
-        options: {options: ["1", "2", "3", "4", "5"]},
+        default: qsize,
+        options: {options: ["1", "2", "3"]},
     },
     {
         id: "colors",
         name: "Max # of colors",
         type: "number",
+        default: qcolors,
         options: {
             min: 1,
             max: 6,
@@ -83,21 +100,21 @@ definitions = [
         id: "colors1",
         name: "Pallete 1",
         type: "select",
-        default: "AllColors",
+        default: qcolor1,
         options: {options: palleteNames},
     },
     {
         id: "colors2",
         name: "Pallete 2",
         type: "select",
-        default: "None",
+        default: qcolor2,
         options: {options: palleteNames},
     },
     {
         id: "colors3",
         name: "Pallete 3",
         type: "select",
-        default: "None",
+        default: qcolor3,
         options: {options: palleteNames},
     },
     {
@@ -110,7 +127,7 @@ definitions = [
         id: "matwidth",
         name: "Mat size",
         type: "number",
-        default: 75,
+        default: 50,
         options: {
             min: 50,
             max: 200,
@@ -143,16 +160,13 @@ if ($fx.getParam('aspectratio')== "296:420"){wide =705; high = 1000};
 
 var ratio = 1/scale;//use 1/4 for 32x40 - 1/3 for 24x30 - 1/2 for 16x20 - 1/1 for 8x10
 var minOffset = ~~(7*ratio); //this is aproximatly .125"
-var framewidth = $fx.getParam('matwidth')*ratio; 
-//if (scale==1){var framewidth = $fx.getParam('matwidth')};
-//if (scale==2){var framewidth = ~~($fx.getParam('matwidth')*ratio)};
-//if (scale==3){var framewidth = ~~($fx.getParam('matwidth')*ratio)};
+var framewidth = ~~($fx.getParam('matwidth')*ratio*scale); 
 var framradius = 0;
 
 
 // Set a canvas size for when layers are exploded where 100=1in
-var panelWide = 4000; 
-var panelHigh = 4000; 
+var panelWide = 1600; 
+var panelHigh = 2000; 
  
 paper.view.viewSize.width = 2400;
 paper.view.viewSize.height = 2400;
