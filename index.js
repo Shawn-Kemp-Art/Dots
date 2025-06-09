@@ -40,7 +40,7 @@ var qsize = "2";
 if(new URLSearchParams(window.location.search).get('s')){qsize = new URLSearchParams(window.location.search).get('s')}; //size
 var qcomplexity = R.random_int(1,10);
 if(new URLSearchParams(window.location.search).get('d')){qcomplexity = new URLSearchParams(window.location.search).get('d')}; //size
-qcomplexity= qcomplexity*25;
+qcomplexity= 100-(qcomplexity*25);
 
 definitions = [
     {
