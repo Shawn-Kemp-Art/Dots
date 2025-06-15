@@ -581,9 +581,10 @@ document.addEventListener('keypress', (event) => {
                         sheet[z].previousSibling.remove();
                     }
                 } 
-                console.log("optimizing")
-                if (z=stacks-1) {console.log("plottable")}
+                console.log("optimizing");
+               
             }
+            console.log("plottable");
         }
 
         //new hash
