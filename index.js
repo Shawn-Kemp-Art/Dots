@@ -329,7 +329,7 @@ for (z = 0; z < stacks; z++) {
     }
     console.log(features);
     $fx.features(features);
-    $fx.preview();
+    //$fx.preview();
 
       //floatingframe();
     //upspirestudio(features); //#render and send features to upspire.studio
