@@ -203,6 +203,7 @@ if ($fx.getParam('pallete')=="BlackonBlack"){linecolor={"Hex":"#FFFFFF", "Name":
 
 var woodframe = new Path();var framegap = new Path();
 var fColor = frameColors[0];
+fColor = {"Hex":"#60513D","Name":"Walnut"};
 var frameColor = fColor.Hex;
 
 //adjust the canvas dimensions
