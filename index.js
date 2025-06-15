@@ -584,7 +584,7 @@ document.addEventListener('keypress', (event) => {
                 console.log("optimizing");
                
             }
-            console.log("plottable");
+            location.hash = '#done';
         }
 
         //new hash
