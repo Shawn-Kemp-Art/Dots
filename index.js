@@ -22,6 +22,9 @@ canvas.style.background = "white";
 
 //Set a seed value for Perlin
 var seed = Math.floor($fx.rand()*10000000000000000);
+console.log(seed);
+console.log($fx.rand());
+console.log(R.random_dec());
 
 //initialize perlin noise 
 var noise = new perlinNoise3d();
@@ -30,18 +33,19 @@ noise.noiseSeed(seed);
 //read in query strings
 var qcolor1 = "AllColors";
 if(new URLSearchParams(window.location.search).get('c1')){qcolor1 = new URLSearchParams(window.location.search).get('c1')}; //colors1
-var qcolor2 = "None";
+var qcolor2 = "AllColors";
 if(new URLSearchParams(window.location.search).get('c2')){qcolor2 = new URLSearchParams(window.location.search).get('c2')}; //colors2
-var qcolor3 = "None";
+var qcolor3 = "AllColors";
 if(new URLSearchParams(window.location.search).get('c3')){qcolor3 = new URLSearchParams(window.location.search).get('c3')}; //colors3
 var qcolors = R.random_int(1,6);
 if(new URLSearchParams(window.location.search).get('c')){qcolors = new URLSearchParams(window.location.search).get('c')}; //number of colors
 var qsize = "2";
 if(new URLSearchParams(window.location.search).get('s')){qsize = new URLSearchParams(window.location.search).get('s')}; //size
-var qcomplexity = R.random_int(1,10);
+var qcomplexity = R.random_int(25,100);
 if(new URLSearchParams(window.location.search).get('d')){qcomplexity = new URLSearchParams(window.location.search).get('d')}; //size
-qcomplexity= -25/3*qcomplexity + 325/3;
-
+if(new URLSearchParams(window.location.search).get('d')){qcomplexity = -25/3*qcomplexity + 325/3};
+console.log(qcolors);
+console.log(qcomplexity);
 
 definitions = [
     {
