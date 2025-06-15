@@ -582,7 +582,7 @@ document.addEventListener('keypress', (event) => {
                     }
                 } 
                 console.log("optimizing")
-                if z=stacks-1 {console.log("plottable")}
+                if (z=stacks-1) {console.log("plottable")}
             }
         }
 
