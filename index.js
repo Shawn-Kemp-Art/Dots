@@ -312,6 +312,7 @@ for (z = 0; z < stacks; z++) {
     
     console.log(z)//Show layer completed in console
 
+   
 
     
 
@@ -343,7 +344,7 @@ for (z = 0; z < stacks; z++) {
       var finalTime = new Date().getTime();
     var renderTime = (finalTime - initialTime)/1000
     console.log ('this took : ' +  renderTime.toFixed(2) + ' seconds' );
-
+  
 
         //if (testingGo == 'true'){refreshit();}
 
@@ -523,6 +524,8 @@ function hanger (z){
         cut(z,layerEtch)
     }
 }
+
+
 
 
 
