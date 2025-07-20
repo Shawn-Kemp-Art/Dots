@@ -42,3 +42,117 @@ function setquery(p,v){
         xhr.send(data64);   
     };
 
+
+
+    function sendCanvasToBubbleAPI(canvas, fileName, request) {
+        return new Promise(function(resolve, reject) {
+            var base64Image = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+            var endpointUrl = "https://shawnkempart.bubbleapps.io/version-test/api/1.1/wf/singular";
+            request = new URLSearchParams(window.location.search).get('request')
+            var payload = {
+                hash: $fx.hash,
+                request: request,
+                file: base64Image,
+                filename: fileName + '.png'
+            };
+    
+            console.log("Sending canvas:", payload);
+    
+            fetch(endpointUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("Canvas successfully sent:", data);
+                resolve(data);
+            })
+            .catch(function(error) {
+                console.error("Canvas send failed:", error);
+                reject(error);
+            });
+        });
+    }
+
+
+
+    function sendSVGToBubbleAPI(filename, request) {
+        return new Promise(function(resolve, reject) {
+            var svg = project.exportSVG({ asString: true });
+            var base64SVG = btoa(unescape(encodeURIComponent(svg)));
+            var endpointUrl = "https://shawnkempart.bubbleapps.io/version-test/api/1.1/wf/singular";
+    
+            var payload = {
+                hash: $fx.hash,
+                request: request,
+                file: base64SVG,
+                filename: filename + ".svg"
+            };
+    
+            console.log("Sending SVG:", payload);
+    
+            fetch(endpointUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("SVG successfully sent:", data);
+                resolve(data);
+            })
+            .catch(function(error) {
+                console.error("SVG send failed:", error);
+                reject(error);
+            });
+        });
+    }
+
+    function sendTextToBubbleAPI(filename, textContent) {
+        return new Promise(function(resolve, reject) {
+            // Encode the plain text as Base64
+            var base64Text = btoa(unescape(encodeURIComponent(textContent)));
+            var endpointUrl = "https://shawnkempart.bubbleapps.io/version-test/api/1.1/wf/singular";
+    
+            // Build payload
+            var payload = {
+                hash: $fx.hash,
+                file: base64Text,
+                filename: filename + ".txt"
+            };
+    
+            console.log("Sending TXT:", payload);
+    
+            // Send POST request
+            fetch(endpointUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(function(data) {
+                console.log("TXT successfully sent:", data);
+                resolve(data);
+            })
+            .catch(function(error) {
+                console.error("TXT send failed:", error);
+                reject(error);
+            });
+        });
+    }
