@@ -532,7 +532,37 @@ function hanger (z){
 }
 
 
+function sendCanvasToBubbleAPI(canvas, fileName, endpointUrl) {
+    // Convert canvas to Base64 PNG and remove the prefix
+    var base64Image = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
 
+    // Build payload
+    var payload = {
+        file: base64Image,
+        filename: fileName + ".png"
+    };
+
+    // Send POST request to Bubble endpoint
+    fetch(endpointUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+            // Add authorization header here if needed:
+            // "Authorization": "Bearer YOUR_BUBBLE_API_KEY"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(function(response) {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+    })
+    .then(function(data) {
+        console.log("Canvas successfully sent to Bubble API:", data);
+    })
+    .catch(function(error) {
+        console.error("Error sending canvas to Bubble API:", error);
+    });
+}
 
 
 
@@ -634,7 +664,8 @@ document.addEventListener('keypress', (event) => {
              
         //Save as PNG
         if(event.key == "p") {
-            canvas.toBlob(function(blob) {saveAs(blob, fileName+'.png');});
+            //canvas.toBlob(function(blob) {saveAs(blob, fileName+'.png');});
+            sendCanvasToBubbleAPI(myCanvas, $fx.hash, "https://studio.shawnkemp.art/version-test/api/1.1/wf/singular");
             }
 
         //Export colors as txt
