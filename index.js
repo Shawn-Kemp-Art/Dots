@@ -599,6 +599,7 @@ async function sendAllExports() {
     }
     paper.view.update();
     await sendSVGToBubbleAPI("Plotting-" + $fx.hash);
+    sendFeaturesAPI(features);
     console.log("All exports sent!");
 }
 
