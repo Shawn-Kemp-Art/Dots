@@ -48,7 +48,7 @@ console.log(qcolors);
 console.log(qcomplexity);
 
 var qorientation =R.random_int(1,2) < 2 ? "portrait" : "landscape";
-var qframecolor = R.random_int(1,3) < 1 ? "White" : R.random_int(1,3) < 2 ? "Mocha" : "Random";
+var qframecolor = R.random_int(0,3) < 1 ? "White" : R.random_int(1,3) < 2 ? "Mocha" : "Random";
 var qmatwidth = R.random_int(50,200);
 
 definitions = [
