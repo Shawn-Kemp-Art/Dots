@@ -33,9 +33,9 @@ noise.noiseSeed(seed);
 //read in query strings
 var qcolor1 = "AllColors";
 if(new URLSearchParams(window.location.search).get('c1')){qcolor1 = new URLSearchParams(window.location.search).get('c1')}; //colors1
-var qcolor2 = "AllColors";
+var qcolor2 = "None";
 if(new URLSearchParams(window.location.search).get('c2')){qcolor2 = new URLSearchParams(window.location.search).get('c2')}; //colors2
-var qcolor3 = "AllColors";
+var qcolor2 = "None";
 if(new URLSearchParams(window.location.search).get('c3')){qcolor3 = new URLSearchParams(window.location.search).get('c3')}; //colors3
 var qcolors = R.random_int(1,6);
 if(new URLSearchParams(window.location.search).get('c')){qcolors = new URLSearchParams(window.location.search).get('c')}; //number of colors
