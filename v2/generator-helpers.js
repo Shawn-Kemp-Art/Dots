@@ -12,14 +12,28 @@
  *   await studioAPI.sendCanvas(canvas, hash, filename);
  *   await studioAPI.sendSVG(svgString, hash, filename);
  *   await studioAPI.sendText(text, hash, filename);
+ *
+ * For local development, set the API base before calling:
+ *   studioAPI.setApiBase('http://localhost:3000');
+ *
+ * For server-side generation (skart mode):
+ *   if (studioAPI.isSkartMode()) {
+ *     // Auto-run generation and call signalComplete() when done
+ *     await generateAndExport();
+ *     studioAPI.signalComplete();
+ *   }
  */
 
 (function (global) {
   'use strict';
 
-  //const API_BASE = 'https://studio.shawnkemp.art';
+  // Check for server-injected API_BASE first (for Puppeteer execution)
+  // Falls back to production URL, can be overridden via setApiBase()
+  let API_BASE = global.__STUDIO_API_BASE__ || 'http://localhost:3000';
 
-  const API_BASE = 'http://localhost:3001';
+  if (global.__STUDIO_API_BASE__) {
+    console.log('[studioAPI] Using server-injected API_BASE:', API_BASE);
+  }
 
   /**
    * Set the API base URL (useful for local development)
@@ -307,6 +321,50 @@
     });
   }
 
+  /**
+   * Check if running in server-side generation mode (skart=1)
+   * When true, the generator should auto-run and call signalComplete() when done
+   * @returns {boolean}
+   */
+  function isSkartMode() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('skart') === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Signal that generation is complete (for server-side execution)
+   * This logs a message that Puppeteer listens for to know generation is done
+   * @param {boolean} [success=true] - Whether generation succeeded
+   * @param {string} [error=null] - Error message if failed
+   */
+  function signalComplete(success = true, error = null) {
+    if (success) {
+      console.log('[GENERATION_COMPLETE]');
+    } else {
+      console.log(`[GENERATION_ERROR] ${error || 'Unknown error'}`);
+    }
+    // Also notify parent window (for iframe mode)
+    notifyGenerationComplete({ success, error });
+  }
+
+  /**
+   * Get the hash from URL parameters (convenience method)
+   * Supports both 'fxhash' and 'hash' parameter names
+   * @returns {string|null}
+   */
+  function getHashFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('fxhash') || params.get('hash') || null;
+    } catch {
+      return null;
+    }
+  }
+
   // Expose API
   global.studioAPI = {
     setApiBase,
@@ -319,5 +377,8 @@
     notifyGenerationComplete,
     notifyGenerationError,
     onGenerateRequest,
+    isSkartMode,
+    signalComplete,
+    getHashFromUrl,
   };
 })(typeof window !== 'undefined' ? window : this);

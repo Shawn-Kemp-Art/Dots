@@ -425,6 +425,7 @@ for (z = 0; z < stacks; z++) {
         await studioAPI.sendFeatures($fx.hash, features);
 
         console.log("All exports sent!");
+        studioAPI.signalComplete();
     }
 
 
