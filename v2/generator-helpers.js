@@ -29,7 +29,7 @@
 
   // Check for server-injected API_BASE first (for Puppeteer execution)
   // Falls back to production URL, can be overridden via setApiBase()
-  let API_BASE = global.__STUDIO_API_BASE__ || 'http://localhost:3000';
+  let API_BASE = global.__STUDIO_API_BASE__ || 'https://studio-shawnkemp-art.vercel.app';
 
   if (global.__STUDIO_API_BASE__) {
     console.log('[studioAPI] Using server-injected API_BASE:', API_BASE);
